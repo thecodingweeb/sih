@@ -31,11 +31,13 @@ app = FastAPI(
     version="2.0.0",
 )
 
-# 3. Safe static mounting (creates directory if missing to prevent RuntimeError)
+# 3. Safe static mounting for read-only serverless environments
 def safe_mount(folder_name: str, route: str, name: str):
     target_path = os.path.join(FRONTEND_DIR, folder_name)
-    os.makedirs(target_path, exist_ok=True)
-    app.mount(route, StaticFiles(directory=target_path), name=name)
+    if os.path.isdir(target_path):
+        app.mount(route, StaticFiles(directory=target_path), name=name)
+    else:
+        print(f"Notice: Static folder '{target_path}' not found, skipping mount for {route}")
 
 safe_mount("css", "/css", "css")
 safe_mount("js", "/js", "js")
