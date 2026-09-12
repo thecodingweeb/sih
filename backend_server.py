@@ -23,6 +23,11 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 # Line 17:
 FRONTEND_DIR = os.path.join(_HERE, "frontend")
 FRONTEND_DIR = os.path.join(_HERE, "frontend")
+app = FastAPI(
+    title="DRDO SIH26054 Aero-Piston Engine Digital Twin Backend",
+    description="Unified backend server coordinating M1 (Physics Twin), M2 (Prognostics/RUL), M3 (Telemetry/Fault Injection), and M4 (Machine Learning Inference).",
+    version="2.0.0",
+)
 
 app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
 app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
@@ -34,12 +39,6 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 from orchestrator import Orchestrator, TelemetryFrame
-
-app = FastAPI(
-    title="DRDO SIH26054 Aero-Piston Engine Digital Twin Backend",
-    description="Unified backend server coordinating M1 (Physics Twin), M2 (Prognostics/RUL), M3 (Telemetry/Fault Injection), and M4 (Machine Learning Inference).",
-    version="2.0.0",
-)
 
 app.add_middleware(
     CORSMiddleware,
