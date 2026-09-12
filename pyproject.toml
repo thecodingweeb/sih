@@ -4,7 +4,12 @@ version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi",
-    "uvicorn"
+    "uvicorn",
+    "pydantic",
+    "numpy",
+    # Add any other modules your code imports, for example:
+    # "scipy",
+    # "pandas"
 ]
 
 [tool.vercel]
