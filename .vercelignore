@@ -1,12 +1,32 @@
-.venv/
-venv/
-__pycache__/
-*.pyc
+# Ignore ML models and checkpoints
 *.pt
 *.pth
-*.bin
 *.onnx
+*.bin
 *.h5
 *.pkl
-M4/ml/checkpoints/
-M4/ml/runs/
+*.joblib
+
+# Ignore datasets and data files
+*.csv
+*.tsv
+*.parquet
+*.json
+*.sqlite3
+*.db
+data/
+datasets/
+
+# Ignore notebooks and training assets
+*.ipynb
+notebooks/
+runs/
+wandb/
+
+# Ignore local virtual environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+.git/
