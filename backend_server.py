@@ -7,39 +7,42 @@ REST endpoints for the Ground Control Station (GCS) frontend.
 
 import os
 import sys
+from pathlib import Path
 from typing import Dict, Any, Optional, List
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import uvicorn
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import os
-from pathlib import Path
+from pydantic import BaseModel
+import uvicorn
 
-# Define _HERE as the directory containing this file
+# 1. Base paths and sys.path setup
 _HERE = os.path.dirname(os.path.abspath(__file__))
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
 
-# Line 17:
 FRONTEND_DIR = os.path.join(_HERE, "frontend")
-FRONTEND_DIR = os.path.join(_HERE, "frontend")
+
+# 2. FastAPI app instance
 app = FastAPI(
     title="DRDO SIH26054 Aero-Piston Engine Digital Twin Backend",
     description="Unified backend server coordinating M1 (Physics Twin), M2 (Prognostics/RUL), M3 (Telemetry/Fault Injection), and M4 (Machine Learning Inference).",
     version="2.0.0",
 )
 
-app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
-app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
-app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
-app.mount("/data", StaticFiles(directory=os.path.join(FRONTEND_DIR, "data")), name="data")
+# 3. Safe static mounting (creates directory if missing to prevent RuntimeError)
+def safe_mount(folder_name: str, route: str, name: str):
+    target_path = os.path.join(FRONTEND_DIR, folder_name)
+    os.makedirs(target_path, exist_ok=True)
+    app.mount(route, StaticFiles(directory=target_path), name=name)
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-if _HERE not in sys.path:
-    sys.path.insert(0, _HERE)
+safe_mount("css", "/css", "css")
+safe_mount("js", "/js", "js")
+safe_mount("assets", "/assets", "assets")
+safe_mount("data", "/data", "data")
 
-from orchestrator import Orchestrator, TelemetryFrame
-
+# 4. Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -48,13 +51,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize global orchestrator
+# 5. Core Orchestrator & Logic
+from orchestrator import Orchestrator, TelemetryFrame
+
 orchestrator = Orchestrator(
     rate_hz=10.0,
     history_maxlen=1000,
     mission_duration_hours=8.0,
 )
-
 # Start orchestrator background loop
 try:
     orchestrator.start(blocking=False)
