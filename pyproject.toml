@@ -1,2 +1,11 @@
+[project]
+name = "sih-backend"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn"
+]
+
 [tool.vercel]
-entrypoint = "M4.ml.api.main:app"
+entrypoint = "backend_server:app"
