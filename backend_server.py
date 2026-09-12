@@ -14,6 +14,14 @@ from pydantic import BaseModel
 import uvicorn
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+import os
+from pathlib import Path
+
+# Define _HERE as the directory containing this file
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
+# Line 17:
+FRONTEND_DIR = os.path.join(_HERE, "frontend")
 FRONTEND_DIR = os.path.join(_HERE, "frontend")
 
 app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
