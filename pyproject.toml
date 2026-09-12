@@ -7,9 +7,10 @@ dependencies = [
     "uvicorn",
     "pydantic",
     "numpy",
-    # Add any other modules your code imports, for example:
-    # "scipy",
-    # "pandas"
+    "pandas",
+    "scipy",
+    "requests",
+    "httpx"
 ]
 
 [tool.vercel]
